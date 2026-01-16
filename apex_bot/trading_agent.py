@@ -24,6 +24,10 @@ class SelfLearningAgent:
     Uses reinforcement learning to continuously improve
     """
     
+    # Training constants
+    BATCH_SIZE = 64
+    MINIMUM_MEMORY_SIZE = 64
+    
     def __init__(self, config: Config):
         self.config = config
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -111,11 +115,11 @@ class SelfLearningAgent:
         self.memory.append((state, action, reward, next_state, done))
         
         # Only learn if we have enough experiences
-        if len(self.memory) < 64:
+        if len(self.memory) < self.MINIMUM_MEMORY_SIZE:
             return
         
         # Sample mini-batch from memory
-        batch = random.sample(self.memory, min(64, len(self.memory)))
+        batch = random.sample(self.memory, min(self.BATCH_SIZE, len(self.memory)))
         
         self.network.train()
         total_loss = 0.0
